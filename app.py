@@ -1,11 +1,24 @@
 from flask import Flask, render_template, request, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from flask_mail import Mail, Message
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 app = Flask(__name__)
-app.config["SECRET_KEY"] = "myapplication123"
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("SQLALCHEMY_DATABASE_URI")
+
+app.config["MAIL_SERVER"] = "smtp.gmail.com"
+app.config["MAIL_PORT"] = 465
+app.config["MAIL_USE_SSL"] = True
+
+app.config["MAIL_USERNAME"] = os.getenv("EMAIL")
+app.config["MAIL_PASSWORD"] = os.getenv("PASSWORD")
 db = SQLAlchemy(app)
+
+mail = Mail(app)
 
 
 class Form(db.Model):
@@ -37,6 +50,20 @@ def index():
 
         db.session.add(form)
         db.session.commit()
+
+        message_body = (
+            f"Thank you for your submission, {first_name}. "
+            f"Here are your data:\n{first_name}\n{last_name}\n{date}\n"
+            f"Thank you!"
+        )
+        message = Message(
+            subject="New form submission",
+            sender=app.config["MAIL_USERNAME"],
+            recipients=[email],
+            body=message_body,
+        )
+
+        mail.send(message)
 
         flash(f"{first_name}, your form was submitted successfully", "success")
 
