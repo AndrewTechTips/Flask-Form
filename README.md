@@ -1,6 +1,6 @@
 <div align="center">
 
-  <h1>📝 Job Application Form (Flask)</h1>
+  <h1>📝 Job Application Form</h1>
 
   <p>
     A modern <strong>web application</strong> for collecting and managing job applications.<br />
