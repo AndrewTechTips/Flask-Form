@@ -6,28 +6,33 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
-app = Flask(__name__)
-app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("SQLALCHEMY_DATABASE_URI")
 
-app.config["MAIL_SERVER"] = "smtp.gmail.com"
-app.config["MAIL_PORT"] = 465
-app.config["MAIL_USE_SSL"] = True
-
-app.config["MAIL_USERNAME"] = os.getenv("EMAIL")
-app.config["MAIL_PASSWORD"] = os.getenv("PASSWORD")
-db = SQLAlchemy(app)
-
-mail = Mail(app)
+db = SQLAlchemy()
+mail = Mail()
 
 
-class Form(db.Model):
+class Config:
+    SECRET_KEY = os.getenv("SECRET_KEY", "default-dev-key")
+    SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI", "sqlite:///data.db")
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    MAIL_SERVER = "smtp.gmail.com"
+    MAIL_PORT = 465
+    MAIL_USE_SSL = True
+    MAIL_USERNAME = os.getenv("EMAIL")
+    MAIL_PASSWORD = os.getenv("PASSWORD")
+    MAIL_DEFAULT_SENDER = os.getenv("EMAIL")
+
+
+class FormSubmission(db.Model):
+    __tablename__ = "form_submissions"
+
     id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(80))
-    last_name = db.Column(db.String(80))
-    email = db.Column(db.String(80))
-    date = db.Column(db.Date)
-    occupation = db.Column(db.String(80))
+    first_name = db.Column(db.String(80), nullable=False)
+    last_name = db.Column(db.String(80), nullable=False)
+    email = db.Column(db.String(120), nullable=False)
+    date = db.Column(db.Date, nullable=False)
+    occupation = db.Column(db.String(80), nullable=False)
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -40,7 +45,7 @@ def index():
         date_obj = datetime.strptime(date, "%Y-%m-%d")
         occupation = request.form["occupation"]
 
-        form = Form(
+        form = FormSubmission(
             first_name=first_name,
             last_name=last_name,
             email=email,
