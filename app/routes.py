@@ -33,7 +33,7 @@ def index():
             return redirect(url_for("main.index"))
 
         try:
-            html_body = render_template("email_confirmation", form=form)
+            html_body = render_template("email_confirmation.html", form=form)
 
             # Create a plain text fallback for clients that don't support HTML
             text_body = (
