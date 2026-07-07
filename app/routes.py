@@ -67,4 +67,4 @@ def index():
                 flash(f"{error}", "danger")
 
     # Pass the form object to the template
-    return render_template("index.html")
+    return render_template("index.html", form=form)
