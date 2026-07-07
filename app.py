@@ -2,26 +2,6 @@ from flask import Flask, render_template, request, flash, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_mail import Mail, Message
-from dotenv import load_dotenv
-import os
-
-load_dotenv()
-
-db = SQLAlchemy()
-mail = Mail()
-
-
-class Config:
-    SECRET_KEY = os.getenv("SECRET_KEY", "default-dev-key")
-    SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI", "sqlite:///data.db")
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-
-    MAIL_SERVER = "smtp.gmail.com"
-    MAIL_PORT = 465
-    MAIL_USE_SSL = True
-    MAIL_USERNAME = os.getenv("EMAIL")
-    MAIL_PASSWORD = os.getenv("PASSWORD")
-    MAIL_DEFAULT_SENDER = os.getenv("EMAIL")
 
 
 class FormSubmission(db.Model):
