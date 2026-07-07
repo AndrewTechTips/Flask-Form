@@ -33,7 +33,10 @@ def index():
             return redirect(url_for("main.index"))
 
         try:
-            message_body = (
+            html_body = render_template("email_confirmation", form=form)
+
+            # Create a plain text fallback for clients that don't support HTML
+            text_body = (
                 f"Hello {form.first_name.data},\n\n"
                 f"Thank you for your submission. Here is a summary of the details we received:\n\n"
                 f"Name: {form.first_name.data} {form.last_name.data}\n"
@@ -45,7 +48,8 @@ def index():
             message = Message(
                 subject="New Form Submission Confirmation",
                 recipients=[form.email.data],
-                body=message_body,
+                body=text_body,
+                html=html_body,  # Injecting the styled template here
             )
             mail.send(message)
         except Exception:
